@@ -44,22 +44,17 @@ class Quiz {
     };
   }
 
-  factory Quiz.fromMap(Map<String, dynamic> map) {
-    return Quiz(
-      question: map['question'] as String,
-      correctAnswer: map['correctAnswer'] as String,
-      incorrectAnswers: List<String>.from(
-        map['incorrectAnswers'] as List<dynamic>,
-      ),
-      difficult: map['difficult'] as String,
-      category: map['category'] as String,
-    );
-  }
+factory Quiz.fromJson(Map<String, dynamic> json) {
+  return Quiz(
+    question: json['question'] as String,
+    correctAnswer: json['correct_answer'] as String,
+    incorrectAnswers: List<String>.from(json['incorrect_answers']),
+    difficult: json['difficulty'] as String,
+    category: json['category'] as String,
+  );
+}
 
   String toJson() => json.encode(toMap());
-
-  factory Quiz.fromJson(String source) =>
-      Quiz.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

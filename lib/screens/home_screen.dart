@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_app/provider/quiz_provider.dart';
+import 'package:quiz_app/screens/quiz_screen.dart';
 import 'package:quiz_app/theme/mytheme.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -164,17 +165,17 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          SizedBox(width: 30,),
+                          SizedBox(width: 30),
                           VerticalDivider(
                             color: Colors.grey.shade400,
                             thickness: 1,
                             width: 1,
                           ),
-                          SizedBox(width: 20,),
+                          SizedBox(width: 20),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                               Text(
+                              Text(
                                 '5 min',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -191,17 +192,17 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          SizedBox(width: 30,),
+                          SizedBox(width: 30),
                           VerticalDivider(
                             color: Colors.grey.shade400,
                             thickness: 1,
                             width: 1,
                           ),
-                          SizedBox(width: 30,),
+                          SizedBox(width: 30),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                               Text(
+                              Text(
                                 '4',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -222,27 +223,38 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 70,),
+                  SizedBox(height: 70),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Mytheme.primaryPurple,
-                      fixedSize: Size(370,60),
+                      fixedSize: Size(370, 60),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(10)
-                      )
+                        borderRadius: BorderRadiusGeometry.circular(10),
+                      ),
                     ),
-                    onPressed: (){}, 
-                  child:Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.play_arrow_rounded,color: Colors.white,size: 30,),
-                      SizedBox(width: 10,),
-                      Text('Start Quiz',style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25
-                      ),),
-                    ],
-                  ),),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => QuizScreen()),
+                      );
+                      ref.read(quizProvider.notifier).fetchQuiz();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Start Quiz',
+                          style: TextStyle(color: Colors.white, fontSize: 25),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

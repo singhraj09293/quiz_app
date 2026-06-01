@@ -48,7 +48,7 @@ class QuizState {
 
   factory QuizState.fromMap(Map<String, dynamic> map) {
     return QuizState(
-      List<Quiz>.from((map['question'] as List<int>).map<Quiz>((x) => Quiz.fromMap(x as Map<String,dynamic>),),),
+      List<Quiz>.from((map['question'] as List<int>).map<Quiz>((x) => Quiz.fromJson(x as Map<String,dynamic>),),),
       map['currentIndex'] as int,
       map['score'] as int,
       map['incorrect'] as int,
