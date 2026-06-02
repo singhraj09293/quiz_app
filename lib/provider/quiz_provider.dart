@@ -6,12 +6,14 @@ import 'package:quiz_app/service/quiz_service.dart';
 class QuizNotifier extends AsyncNotifier<QuizState> {
   @override
   Future<QuizState> build() async {
-    return QuizState([], 0, 0, 0, false);
+    return QuizState([], 0, 0, 0, false, '', '');
   }
 
-  Future<void> fetchQuiz() async {
-    final question = await QuizService().fetchQuiz();
-    state = AsyncData(QuizState(question, 0, 0, 0, false));
+  Future<void> fetchQuiz(String category, String difficulty) async {
+    final question = await QuizService().fetchQuiz(category, difficulty);
+    state = AsyncData(
+      QuizState(question, 0, 0, 0, false, category, difficulty),
+    );
   }
 
   void answerQuestion(String answer) {
@@ -39,7 +41,9 @@ class QuizNotifier extends AsyncNotifier<QuizState> {
   }
 
   void resetQuiz() {
-    state = AsyncData(QuizState([], 0, 0, 0, false));
+    ref.read(timeProvider.notifier).isRunning = false;
+    ref.read(timeProvider.notifier).restartQuiz();
+    state = AsyncData(QuizState([], 0, 0, 0, false, '', ''));
   }
 }
 
@@ -47,7 +51,7 @@ class TimeNotifier extends Notifier<int> {
   bool isRunning = false;
   @override
   int build() {
-    return 30;
+    return 60;
   }
 
   void startTimer() {
@@ -63,7 +67,7 @@ class TimeNotifier extends Notifier<int> {
   }
 
   void restartQuiz() {
-    state = 30;
+    state = 60;
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_app/provider/quiz_provider.dart';
+import 'package:quiz_app/screens/home_screen.dart';
 import 'package:quiz_app/screens/result.dart';
 import 'package:quiz_app/theme/mytheme.dart';
 
@@ -13,7 +14,9 @@ class QuizScreen extends ConsumerStatefulWidget {
 
 class _QuizScreenState extends ConsumerState<QuizScreen> {
   bool _dialogShown = false;
+  bool _timeUpShown = false;
   String? _selectedAnswer;
+  final Map<int, List<String>> _shuffledOptions = {};
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +32,62 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             );
           }
           final time = ref.watch(timeProvider);
-          final options = [
-            ...value.question[value.currentIndex].incorrectAnswers,
-            value.question[value.currentIndex].correctAnswer,
-          ];
+          if (!_shuffledOptions.containsKey(value.currentIndex)) {
+            _shuffledOptions[value.currentIndex] = [
+              ...value.question[value.currentIndex].incorrectAnswers,
+              value.question[value.currentIndex].correctAnswer,
+            ]..shuffle();
+          }
+          final options = _shuffledOptions[value.currentIndex]!;
+          if (time == 0 && !_timeUpShown) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _timeUpShown = true;
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  backgroundColor: Mytheme.cardBg,
+                  icon: Icon(
+                    Icons.timer_off_rounded,
+                    color: Mytheme.wrongRed,
+                    size: 50,
+                  ),
+                  title: Text(
+                    'Time\'s Up! ⏰',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  content: Text(
+                    'You ran out of time!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Mytheme.optionTextDim),
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceEvenly,
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        ref.read(timeProvider.notifier).restartQuiz();
+                        ref.read(timeProvider.notifier).isRunning = false;
+                        ref.read(quizProvider.notifier).resetQuiz();
+                        setState(() {
+                          _timeUpShown = false;
+                        });
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => HomeScreen()),
+                          (route) => false,
+                        );
+                      },
+                      child: Text(
+                        'Go Home',
+                        style: TextStyle(color: Mytheme.wrongRed),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+          }
+
           if (!_dialogShown) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _dialogShown = true;
@@ -40,10 +95,32 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 context: context,
                 builder: (_) => AlertDialog(
                   backgroundColor: Mytheme.cardBg,
-                  title: Text(
-                    'Are you ready to crash your brain',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(20),
                   ),
+                  icon: Icon(
+                    Icons.psychology_rounded,
+                    color: Mytheme.pointsGold,
+                    size: 50,
+                  ),
+                  title: Text(
+                    'Are you ready to\ncrash your brain? 🧠',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: Text(
+                    '10 questions await you.\nGood luck!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Mytheme.optionTextDim,
+                      fontSize: 14,
+                    ),
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceEvenly,
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -264,7 +341,15 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                             value.currentIndex == value.question.length - 1
                                 ? Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => Result()),
+                                    MaterialPageRoute(
+                                      builder: (_) => Result(
+                                        score: value.score,
+                                        incorrect: value.incorrect,
+                                        total: value.question.length,
+                                        category: value.category,
+                                        difficulty: value.difficulty,
+                                      ),
+                                    ),
                                   )
                                 : ref
                                       .read(quizProvider.notifier)

@@ -5,12 +5,18 @@ import 'package:quiz_app/provider/quiz_provider.dart';
 import 'package:quiz_app/screens/quiz_screen.dart';
 import 'package:quiz_app/theme/mytheme.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final quizs = ref.watch(quizProvider);
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String selectedCategory = '18';
+String selectedDifficulty = 'medium';
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff534AB7),
       body: Column(
@@ -89,12 +95,49 @@ class HomeScreen extends ConsumerWidget {
                                 'Category',
                                 style: TextStyle(color: Mytheme.darkPurple),
                               ),
-                              Text(
-                                'Science',
-                                style: TextStyle(
-                                  color: Mytheme.darkPurple,
-                                  fontSize: 13,
-                                ),
+                              DropdownButton<String>(
+                                value: selectedCategory,
+                                items: [
+                                  DropdownMenuItem(
+                                    value: '18',
+                                    child: Text(
+                                      'Computers',
+                                      style: TextStyle(
+                                        color: Mytheme.darkPurple,
+                                      ),
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '17',
+                                    child: Text(
+                                      'Science',
+                                      style: TextStyle(
+                                        color: Mytheme.darkPurple,
+                                      ),
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '9',
+                                    child: Text(
+                                      'General',
+                                      style: TextStyle(
+                                        color: Mytheme.darkPurple,
+                                      ),
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '21',
+                                    child: Text(
+                                      'Sports',
+                                      style: TextStyle(
+                                        color: Mytheme.darkPurple,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (val) {
+                                  setState(() => selectedCategory = val!);
+                                },
                               ),
                             ],
                           ),
@@ -119,12 +162,34 @@ class HomeScreen extends ConsumerWidget {
                                 'Difficulty',
                                 style: TextStyle(color: Mytheme.tealDark),
                               ),
-                              Text(
-                                'Medium',
-                                style: TextStyle(
-                                  color: Mytheme.tealDark,
-                                  fontSize: 13,
-                                ),
+                              DropdownButton<String>(
+                                value: selectedDifficulty,
+                                items: [
+                                  DropdownMenuItem(
+                                    value: 'easy',
+                                    child: Text(
+                                      'Easy',
+                                      style: TextStyle(color: Mytheme.tealDark),
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'medium',
+                                    child: Text(
+                                      'Medium',
+                                      style: TextStyle(color: Mytheme.tealDark),
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'hard',
+                                    child: Text(
+                                      'Hard',
+                                      style: TextStyle(color: Mytheme.tealDark),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (val) {
+                                  setState(() => selectedDifficulty = val!);
+                                },
                               ),
                             ],
                           ),
@@ -176,7 +241,7 @@ class HomeScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '5 min',
+                                '1 min',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -237,7 +302,9 @@ class HomeScreen extends ConsumerWidget {
                         context,
                         MaterialPageRoute(builder: (_) => QuizScreen()),
                       );
-                      ref.read(quizProvider.notifier).fetchQuiz();
+                      ref
+                          .read(quizProvider.notifier)
+                          .fetchQuiz(selectedCategory!, selectedDifficulty!);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -11,6 +11,8 @@ class QuizState {
   final int score;
   final int incorrect;
   final bool isAnswered;
+  final String category;
+  final String difficulty;
 
   QuizState(
     this.question,
@@ -18,6 +20,8 @@ class QuizState {
     this.score,
     this.incorrect,
     this.isAnswered,
+    this.category,
+    this.difficulty,
   );
 
   QuizState copyWith({
@@ -26,6 +30,8 @@ class QuizState {
     int? score,
     int? incorrect,
     bool? isAnswered,
+    String? category,
+    String? difficulty,
   }) {
     return QuizState(
       question ?? this.question,
@@ -33,6 +39,8 @@ class QuizState {
       score ?? this.score,
       incorrect ?? this.incorrect,
       isAnswered ?? this.isAnswered,
+      category ?? this.category,
+      difficulty ?? this.difficulty,
     );
   }
 
@@ -43,46 +51,58 @@ class QuizState {
       'score': score,
       'incorrect': incorrect,
       'isAnswered': isAnswered,
+      'category': category,
+      'difficulty': difficulty,
     };
   }
 
   factory QuizState.fromMap(Map<String, dynamic> map) {
     return QuizState(
-      List<Quiz>.from((map['question'] as List<int>).map<Quiz>((x) => Quiz.fromJson(x as Map<String,dynamic>),),),
+      List<Quiz>.from(
+        (map['question'] as List<int>).map<Quiz>(
+          (x) => Quiz.fromJson(x as Map<String, dynamic>),
+        ),
+      ),
       map['currentIndex'] as int,
       map['score'] as int,
       map['incorrect'] as int,
       map['isAnswered'] as bool,
+      map['category'] as String,
+      map['difficulty'] as String,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory QuizState.fromJson(String source) => QuizState.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory QuizState.fromJson(String source) =>
+      QuizState.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'QuizState(question: $question, currentIndex: $currentIndex, score: $score, incorrect: $incorrect, isAnswered: $isAnswered)';
+    return 'QuizState(question: $question, currentIndex: $currentIndex, score: $score, incorrect: $incorrect, isAnswered: $isAnswered, category: $category, difficulty: $difficulty)';
   }
 
   @override
   bool operator ==(covariant QuizState other) {
     if (identical(this, other)) return true;
-  
-    return 
-      listEquals(other.question, question) &&
-      other.currentIndex == currentIndex &&
-      other.score == score &&
-      other.incorrect == incorrect &&
-      other.isAnswered == isAnswered;
+
+    return listEquals(other.question, question) &&
+        other.currentIndex == currentIndex &&
+        other.score == score &&
+        other.incorrect == incorrect &&
+        other.isAnswered == isAnswered &&
+        other.category == category &&
+        other.difficulty == difficulty;
   }
 
   @override
   int get hashCode {
     return question.hashCode ^
-      currentIndex.hashCode ^
-      score.hashCode ^
-      incorrect.hashCode ^
-      isAnswered.hashCode;
+        currentIndex.hashCode ^
+        score.hashCode ^
+        incorrect.hashCode ^
+        isAnswered.hashCode ^
+        category.hashCode ^
+        difficulty.hashCode;
   }
 }
